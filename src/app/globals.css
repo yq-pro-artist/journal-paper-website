@@ -1,26 +1,23 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #0f0d0a;
+  --paper: #f5f0e8;
+  --cream: #ede8db;
+  --red: #c1121f;
+  --gold: #b8860b;
+  --gray: #6b6560;
+  --light-gray: #d4cfc6;
+  --col: 1px solid var(--ink);
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+input, textarea, select { background: white; border: 1px solid var(--light-gray); border-radius: 0; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); width: 100%; outline: none; appearance: none; transition: border-color 0.2s, box-shadow 0.2s; }
+input:focus, textarea:focus, select:focus { border-color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
+label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; display: block; margin-bottom: 6px; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes popScore { 0% { transform: scale(0.85); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
