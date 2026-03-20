@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { trackSubmit, trackEvent } from '../lib/logsnag'
 
 const RATINGS = [
   { key: 'h',  label: '夯',    emoji: '🔥', points: 5 },
@@ -128,6 +129,7 @@ export default function Home() {
       setRefNum('JKR-' + Date.now().toString(36).toUpperCase().slice(-8))
       setSubmitted(true)
       loadPapers()
+      trackSubmit(form.title, form.author)
     }
   }
 
