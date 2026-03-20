@@ -137,10 +137,11 @@ export default function Home() {
   // 今日收录前10
   const todayTop10 = todaySorted.slice(0, 10)
 
-  // 昨日收录前3（主页展示）
-  const yesterdayPapers = papers.filter(p => isYesterday(p.created_at))
-  const yesterdaySorted = [...yesterdayPapers].sort((a, b) => calcScore(votes[b.id]).score - calcScore(votes[a.id]).score)
-  const yesterdayTop3 = yesterdaySorted.slice(0, 3)
+  // 昨日收录前3（主页展示）—— 使用数据库真实收录标记
+  const yesterdayTop3 = [...papers]
+    .filter(p => p.collected === true)
+    .sort((a, b) => new Date(b.collected_date) - new Date(a.collected_date))
+    .slice(0, 3)
 
   // 存档用
   const categories = [...new Set(papers.map(p => p.tags?.[0]).filter(Boolean))]
