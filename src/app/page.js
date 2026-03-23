@@ -31,6 +31,24 @@ function isYesterday(dateStr) {
   return d.getFullYear() === yesterday.getFullYear() && d.getMonth() === yesterday.getMonth() && d.getDate() === yesterday.getDate()
 }
 
+function isLastWeek(dateStr) {
+  const d = new Date(dateStr)
+  const now = new Date()
+  const weekAgo = new Date(now)
+  weekAgo.setDate(now.getDate() - 7)
+  const twoWeeksAgo = new Date(now)
+  twoWeeksAgo.setDate(now.getDate() - 14)
+  return d >= twoWeeksAgo && d < weekAgo
+}
+
+function isLastMonth(dateStr) {
+  const d = new Date(dateStr)
+  const now = new Date()
+  const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+  const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+  return d >= lastMonth && d < thisMonth
+}
+
 export default function Home() {
   const [page, setPage] = useState('home')
   const [papers, setPapers] = useState([])
@@ -150,13 +168,23 @@ export default function Home() {
   const allSorted = [...papers].sort((a, b) => calcScore(votes[b.id]).score - calcScore(votes[a.id]).score)
   const filtered = filter === 'all' ? allSorted : allSorted.filter(p => p.tags?.[0] === filter)
 
+  // 上周Top5 / 上月Top10
+  const lastWeekTop5 = [...papers]
+    .filter(p => isLastWeek(p.created_at))
+    .sort((a, b) => calcScore(votes[b.id]).score - calcScore(votes[a.id]).score)
+    .slice(0, 5)
+  const lastMonthTop10 = [...papers]
+    .filter(p => isLastMonth(p.created_at))
+    .sort((a, b) => calcScore(votes[b.id]).score - calcScore(votes[a.id]).score)
+    .slice(0, 10)
+
   return (
     <>
       {/* MASTHEAD */}
       <header style={{ borderBottom: '3px double #0f0d0a' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 48px', borderBottom: '1px solid #0f0d0a', fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: '0.08em', color: '#6b6560' }}>
           <span>{today}</span>
-          <span>创立于 2024</span>
+          <span>创立于 2026</span>
           <span>开放获取 · 同行评审</span>
         </div>
         <div style={{ textAlign: 'center', padding: '24px 48px 20px' }}>
@@ -258,13 +286,45 @@ export default function Home() {
       {/* 存档 */}
       {page === 'archive' && (
         <div style={{ padding: 48, animation: 'fadeIn 0.4s ease' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 24 }}>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700 }}>历史存档</h2>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 32 }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700 }}>Archive</h2>
             <div style={{ flex: 1, height: 1, background: '#0f0d0a' }} />
+          </div>
+
+          {/* 上周 Top 5 */}
+          {lastWeekTop5.length > 0 && (
+            <div style={{ marginBottom: 48 }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 20 }}>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700 }}>Last Week — Top 5</h3>
+                <div style={{ flex: 1, height: 1, background: '#d4cfc6' }} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', border: '1px solid #0f0d0a' }}>
+                {lastWeekTop5.map((p, i) => <PaperCard key={p.id} p={p} rank={i} votes={votes[p.id]} userVote={userVotes[p.id]} onVote={castVote} />)}
+              </div>
+            </div>
+          )}
+
+          {/* 上月 Top 10 */}
+          {lastMonthTop10.length > 0 && (
+            <div style={{ marginBottom: 48 }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 20 }}>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700 }}>Last Month — Top 10</h3>
+                <div style={{ flex: 1, height: 1, background: '#d4cfc6' }} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', border: '1px solid #0f0d0a' }}>
+                {lastMonthTop10.map((p, i) => <PaperCard key={p.id} p={p} rank={i} votes={votes[p.id]} userVote={userVotes[p.id]} onVote={castVote} />)}
+              </div>
+            </div>
+          )}
+
+          {/* 全部 */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 20 }}>
+            <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700 }}>All Papers</h3>
+            <div style={{ flex: 1, height: 1, background: '#d4cfc6' }} />
           </div>
           <div style={{ display: 'flex', gap: 12, marginBottom: 32, flexWrap: 'wrap' }}>
             {['all', ...categories].map(c => (
-              <button key={c} onClick={() => setFilter(c)} style={{ padding: '8px 18px', border: '1px solid #0f0d0a', background: filter === c ? '#0f0d0a' : 'none', color: filter === c ? '#f5f0e8' : '#0f0d0a', fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', cursor: 'pointer' }}>{c === 'all' ? '全部' : c}</button>
+              <button key={c} onClick={() => setFilter(c)} style={{ padding: '8px 18px', border: '1px solid #0f0d0a', background: filter === c ? '#0f0d0a' : 'none', color: filter === c ? '#f5f0e8' : '#0f0d0a', fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', cursor: 'pointer' }}>{c === 'all' ? 'All' : c}</button>
             ))}
           </div>
           <div>
@@ -282,7 +342,12 @@ export default function Home() {
                     <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: '#6b6560', marginBottom: 6 }}>{new Date(p.created_at).toLocaleDateString('zh-CN')}</div>
                     <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 900, color: '#b8860b' }}>{score.toFixed(1)}</div>
                     <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, color: '#6b6560' }}>{total} 票</div>
-                    {p.pdf_url && <a href={p.pdf_url} target="_blank" rel="noreferrer" style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, color: '#c1121f', display: 'block', marginTop: 4 }}>📄 PDF</a>}
+                    {p.pdf_url && (
+                  <div style={{ position: 'relative', marginTop: 4 }}>
+                    <a href={p.pdf_url} target="_blank" rel="noreferrer" style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, color: '#c1121f', display: 'block' }}>📄 PDF</a>
+                    <div style={{ fontSize: 8, color: '#d4cfc6', fontFamily: "'DM Mono', monospace", letterSpacing: '0.05em', marginTop: 2 }}>Joker — 别人笑我太疯癫，我笑他人看不穿</div>
+                  </div>
+                )}
                   </div>
                 </div>
               )
@@ -381,7 +446,7 @@ export default function Home() {
       {/* FOOTER */}
       <footer style={{ borderTop: '3px double #0f0d0a', padding: '24px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: "'DM Mono', monospace", fontSize: 10, color: '#6b6560', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
         <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 900, color: '#0f0d0a', letterSpacing: 0, textTransform: 'none' }}>Joker</span>
-        <span>开放获取 · 每日评选 · 创立于 2024</span>
+        <span>开放获取 · 每日评选 · 创立于 2026</span>
         <span>别人笑我太疯癫</span>
       </footer>
     </>
