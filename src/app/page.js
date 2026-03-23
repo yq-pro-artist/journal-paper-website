@@ -212,10 +212,14 @@ export default function Home() {
               <p style={{ fontSize: 14, lineHeight: 1.7, color: '#6b6560' }}>每天24小时内，评分最高的前10篇作品将被收录。主页展示昨日冠亚季军。</p>
             </div>
             <div style={{ background: '#0f0d0a' }} />
-            <div style={{ padding: 40, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#b8860b', marginBottom: 16 }}>Featured</div>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(20px,2.5vw,30px)', fontWeight: 700, lineHeight: 1.3, marginBottom: 16, fontStyle: 'italic' }}>Where independent voices find their place in print</h2>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, lineHeight: 1.8, color: '#6b6560' }}>Joker is an open-access platform for journalists, researchers, and writers. Submit your investigations, essays, and analyses for peer review and global readership.</p>
+            <div style={{ padding: '48px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#c1121f', marginBottom: 20, fontWeight: 600 }}>Featured</div>
+                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px,3vw,42px)', fontWeight: 900, lineHeight: 1.1, marginBottom: 0 }}>
+                  <span>Where </span><em style={{ fontStyle: 'italic', color: '#c1121f' }}>independent</em><span> voices find their place in print</span>
+                </h2>
+              </div>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, lineHeight: 1.8, color: '#6b6560', marginTop: 32 }}>Joker is an open-access platform for journalists, researchers, and writers. Submit your investigations, essays, and analyses for peer review and global readership.</p>
             </div>
             <div style={{ background: '#0f0d0a' }} />
             <div style={{ background: '#0f0d0a', color: '#f5f0e8', padding: '32px 28px' }}>
