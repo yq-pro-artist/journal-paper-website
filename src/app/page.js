@@ -161,10 +161,10 @@ export default function Home() {
         </div>
         <div style={{ textAlign: 'center', padding: '24px 48px 20px' }}>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(52px,8vw,96px)', fontWeight: 900, letterSpacing: '-0.02em', lineHeight: 1, animation: 'fadeDown 0.8s ease both' }}>Joker</div>
-          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#6b6560', marginTop: 8 }}>别人笑我太疯癫，我笑他人看不穿</div>
+          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#6b6560', marginTop: 8 }}>全民审核员</div>
         </div>
         <nav style={{ display: 'flex', borderTop: '1px solid #0f0d0a', fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-          {[['home','首页'], ['today','今日评选'], ['archive','存档'], ['submit','投稿'], ['auth','登录']].map(([id, label]) => (
+          {[['home','Main'], ['today',"Today's Paper"], ['archive','Archive'], ['submit','Submit'], ['auth','Register/Sign In']].map(([id, label]) => (
             <a key={id} onClick={() => setPage(id)} style={{ flex: 1, textAlign: 'center', padding: '10px', borderRight: id !== 'auth' ? '1px solid #0f0d0a' : 'none', cursor: 'pointer', background: page === id ? '#c1121f' : 'transparent', color: page === id ? 'white' : '#0f0d0a', transition: 'background 0.2s' }}>{label}</a>
           ))}
         </nav>
