@@ -202,15 +202,6 @@ export default function Home() {
       {page === 'home' && (
         <div style={{ animation: 'fadeIn 0.4s ease' }}>
 
-          {/* Featured Banner */}
-          <div style={{ background: '#0f0d0a', color: '#f5f0e8', padding: '48px 48px', borderBottom: '3px double #f5f0e8' }}>
-            <div style={{ maxWidth: 800 }}>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#b8860b', marginBottom: 16 }}>Featured</div>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(24px,3vw,38px)', fontWeight: 700, lineHeight: 1.2, marginBottom: 20, fontStyle: 'italic' }}>Where independent voices find their place in print</h2>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, lineHeight: 1.8, color: '#c8c2b8', maxWidth: 620 }}>Joker is an open-access platform for journalists, researchers, and writers. Submit your investigations, essays, and analyses for peer review and global readership.</p>
-            </div>
-          </div>
-
           {/* Hero */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr 1px 300px', borderBottom: '3px double #0f0d0a', minHeight: 320 }}>
             <div style={{ padding: '40px 40px 40px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -221,13 +212,10 @@ export default function Home() {
               <p style={{ fontSize: 14, lineHeight: 1.7, color: '#6b6560' }}>每天24小时内，评分最高的前10篇作品将被收录。主页展示昨日冠亚季军。</p>
             </div>
             <div style={{ background: '#0f0d0a' }} />
-            <div style={{ padding: 40, display: 'flex', flexDirection: 'column', gap: 28 }}>
-              {[['收录论文', papers.length + '篇'], ['今日参评', todayPapers.length + '篇'], ['评分制度', '5级']].map(([label, val]) => (
-                <div key={label} style={{ borderLeft: '3px solid #c1121f', paddingLeft: 16 }}>
-                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 900, lineHeight: 1 }}>{val}</div>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#6b6560', marginTop: 4 }}>{label}</div>
-                </div>
-              ))}
+            <div style={{ padding: 40, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#b8860b', marginBottom: 16 }}>Featured</div>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(20px,2.5vw,30px)', fontWeight: 700, lineHeight: 1.3, marginBottom: 16, fontStyle: 'italic' }}>Where independent voices find their place in print</h2>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, lineHeight: 1.8, color: '#6b6560' }}>Joker is an open-access platform for journalists, researchers, and writers. Submit your investigations, essays, and analyses for peer review and global readership.</p>
             </div>
             <div style={{ background: '#0f0d0a' }} />
             <div style={{ background: '#0f0d0a', color: '#f5f0e8', padding: '32px 28px' }}>
