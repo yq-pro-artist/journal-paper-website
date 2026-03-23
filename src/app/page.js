@@ -201,6 +201,16 @@ export default function Home() {
       {/* 首页：昨日前三 */}
       {page === 'home' && (
         <div style={{ animation: 'fadeIn 0.4s ease' }}>
+
+          {/* Featured Banner */}
+          <div style={{ background: '#0f0d0a', color: '#f5f0e8', padding: '48px 48px', borderBottom: '3px double #f5f0e8' }}>
+            <div style={{ maxWidth: 800 }}>
+              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#b8860b', marginBottom: 16 }}>Featured</div>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(24px,3vw,38px)', fontWeight: 700, lineHeight: 1.2, marginBottom: 20, fontStyle: 'italic' }}>Where independent voices find their place in print</h2>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, lineHeight: 1.8, color: '#c8c2b8', maxWidth: 620 }}>Joker is an open-access platform for journalists, researchers, and writers. Submit your investigations, essays, and analyses for peer review and global readership.</p>
+            </div>
+          </div>
+
           {/* Hero */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr 1px 300px', borderBottom: '3px double #0f0d0a', minHeight: 320 }}>
             <div style={{ padding: '40px 40px 40px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
