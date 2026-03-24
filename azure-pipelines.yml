@@ -1,0 +1,50 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - name: NEXT_PUBLIC_SUPABASE_URL
+    value: $(SUPABASE_URL)
+  - name: NEXT_PUBLIC_SUPABASE_ANON_KEY
+    value: $(SUPABASE_ANON_KEY)
+
+stages:
+  - stage: Test
+    displayName: 运行测试
+    jobs:
+      - job: TestJob
+        displayName: Jest Tests
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '20.x'
+            displayName: Install Node.js
+
+          - script: npm ci
+            displayName: Install Dependencies
+
+          - script: npm run test:ci
+            displayName: Run Jest Tests
+
+  - stage: Build
+    displayName: 构建检查
+    dependsOn: Test
+    jobs:
+      - job: BuildJob
+        displayName: Next.js Build
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '20.x'
+            displayName: Install Node.js
+
+          - script: npm ci
+            displayName: Install Dependencies
+
+          - script: npm run build
+            displayName: Build Next.js
+            env:
+              NEXT_PUBLIC_SUPABASE_URL: $(SUPABASE_URL)
+              NEXT_PUBLIC_SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
