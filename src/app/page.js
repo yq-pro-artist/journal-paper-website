@@ -128,9 +128,10 @@ export default function Home() {
       if (error) setAuthMsg('❌ ' + error.message)
       else { setAuthMsg('✅ 登录成功'); setTimeout(() => setPage('home'), 800) }
     } else {
-      const { error } = await supabase.auth.signUp({ email, password })
+      const { data, error } = await supabase.auth.signUp({ email, password })
       if (error) setAuthMsg('❌ ' + error.message)
-      else { setAuthMsg('✅ 注册成功，请查收确认邮件'); setAuthTab('login') }
+      else if (data?.user?.identities?.length === 0) setAuthMsg('❌ 该邮箱已注册，请直接登录')
+      else setAuthMsg('✅ 注册成功！验证邮件已发送到 ' + email + '，请查收并点击链接完成验证后再登录。')
     }
   }
 
