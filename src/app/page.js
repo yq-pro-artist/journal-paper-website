@@ -203,15 +203,45 @@ export default function Home() {
       {page === 'home' && (
         <div style={{ animation: 'fadeIn 0.4s ease' }}>
 
-
+          {/* Hero */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr 1px 300px', borderBottom: '3px double #0f0d0a', minHeight: 320 }}>
+              <div style={{ padding: '48px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#c1121f', marginBottom: 20, fontWeight: 600 }}>Featured</div>
+                  <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px,3vw,42px)', fontWeight: 900, lineHeight: 1.1, marginBottom: 0 }}>
+                    <span>Where </span><em style={{ fontStyle: 'italic', color: '#c1121f' }}>independent</em><span> voices find their place in print</span>
+                  </h2>
+                </div>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, lineHeight: 1.8, color: '#6b6560', marginTop: 32 }}>Joker is an open-access platform for journalists, researchers, and writers. Submit your investigations, essays, and analyses for peer review and global readership.</p>
+              </div>
+              <div style={{ background: '#0f0d0a' }} />
+              <div style={{ padding: '48px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 36 }}>
+                {[
+                  [papers.length.toString(), 'Papers Submitted'],
+                  ['9', 'Subject Categories'],
+                  ['48h', 'Avg. Review Time'],
+                ].map(([val, label]) => (
+                  <div key={label} style={{ borderLeft: '3px solid #c1121f', paddingLeft: 20 }}>
+                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 48, fontWeight: 900, lineHeight: 1 }}>{val}</div>
+                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#6b6560', marginTop: 6 }}>{label}</div>
+                  </div>
+                ))}
+              </div>
+            <div style={{ background: '#0f0d0a' }} />
+            <div style={{ background: '#0f0d0a', color: '#f5f0e8', padding: '32px 28px' }}>
+              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#b8860b', borderBottom: '1px solid #333', paddingBottom: 10, marginBottom: 16 }}>评分说明</div>
+              {RATINGS.map(r => (
+                <div key={r.key} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                  <span style={{ fontSize: 18 }}>{r.emoji}</span>
+                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, flex: 1 }}>{r.label}</span>
+                  <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 900, color: '#b8860b' }}>{r.points}分</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* 昨日前三 */}
           <div style={{ padding: 48 }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 32 }}>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700 }}>昨日收录 Top 3</h2>
-              <div style={{ flex: 1, height: 1, background: '#0f0d0a' }} />
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: '#6b6560' }}>{new Date(Date.now() - 86400000).toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' })}</span>
-            </div>
 
             {yesterdayTop3.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '80px 0', color: '#6b6560', fontFamily: "'DM Mono', monospace", fontSize: 13 }}>
