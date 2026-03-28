@@ -369,30 +369,42 @@ export default function Home() {
         <div style={{ maxWidth: 900, margin: '0 auto', padding: 48, animation: 'fadeIn 0.4s ease' }}>
           <div style={{ border: '1px solid #0f0d0a', background: '#fffdf9' }}>
             <div style={{ textAlign: 'center', borderBottom: '3px double #0f0d0a', padding: '28px 20px 16px' }}>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(34px,6vw,56px)', fontWeight: 900, marginBottom: 8 }}>投稿</h2>
-              <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6b6560' }}>今日投稿参与24小时评选 · 前10名收录</p>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(34px,6vw,56px)', fontWeight: 900, marginBottom: 4 }}>Submit</h2>
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(18px,2.5vw,28px)', fontWeight: 400, color: '#6b6560', marginBottom: 12 }}>投稿</h3>
+              <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6b6560', marginBottom: 2 }}>今日投稿参与24小时评选 · 前10名收录</p>
+              <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6b6560' }}>Today's submissions enter the 24h rating pool · Top 10 get featured</p>
             </div>
             {!submitted ? (
               <form onSubmit={handleSubmit} style={{ padding: 32 }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div style={{ gridColumn: 'span 2' }}>
-                    <label>论文标题 <span style={{ color: '#c1121f' }}>*</span></label>
-                    <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="你的作品标题" required />
+                    <label>Paper Title <span style={{ color: '#6b6560', fontWeight: 400, fontSize: 12 }}>论文标题</span> <span style={{ color: '#c1121f' }}>*</span></label>
+                    <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Your paper title / 你的作品标题" required />
                   </div>
                   <div>
-                    <label>作者姓名 <span style={{ color: '#c1121f' }}>*</span></label>
-                    <input value={form.author} onChange={e => setForm(f => ({ ...f, author: e.target.value }))} placeholder="作者姓名" required />
+                    <label>Author <span style={{ color: '#6b6560', fontWeight: 400, fontSize: 12 }}>作者姓名</span> <span style={{ color: '#c1121f' }}>*</span></label>
+                    <input value={form.author} onChange={e => setForm(f => ({ ...f, author: e.target.value }))} placeholder="Author name / 作者姓名" required />
                   </div>
                   <div>
-                    <label>学科分类 <span style={{ color: '#c1121f' }}>*</span></label>
+                    <label>Category <span style={{ color: '#6b6560', fontWeight: 400, fontSize: 12 }}>学科分类</span> <span style={{ color: '#c1121f' }}>*</span></label>
                     <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} required style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230f0d0a' stroke-width='1.5' fill='none'/%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 14px center', paddingRight: 36 }}>
-                      <option value="" disabled>选择分类</option>
-                      {['AI与机器学习', '自然语言处理', '计算机视觉', '数据科学', '量子计算', '生物信息', '社会科学', '人文艺术', '其他'].map(c => <option key={c}>{c}</option>)}
+                      <option value="" disabled>Select category / 选择分类</option>
+                      {[
+                        ['AI与机器学习', 'AI & Machine Learning'],
+                        ['自然语言处理', 'Natural Language Processing'],
+                        ['计算机视觉', 'Computer Vision'],
+                        ['数据科学', 'Data Science'],
+                        ['量子计算', 'Quantum Computing'],
+                        ['生物信息', 'Bioinformatics'],
+                        ['社会科学', 'Social Sciences'],
+                        ['人文艺术', 'Humanities & Arts'],
+                        ['其他', 'Other'],
+                      ].map(([zh, en]) => <option key={zh} value={zh}>{en} / {zh}</option>)}
                     </select>
                   </div>
                   <div style={{ gridColumn: 'span 2' }}>
-                    <label>摘要 <span style={{ color: '#c1121f' }}>*</span></label>
-                    <textarea value={form.abstract} onChange={e => setForm(f => ({ ...f, abstract: e.target.value }))} placeholder="简短介绍你的作品..." required style={{ minHeight: 120 }} />
+                    <label>Abstract <span style={{ color: '#6b6560', fontWeight: 400, fontSize: 12 }}>摘要</span> <span style={{ color: '#c1121f' }}>*</span></label>
+                    <textarea value={form.abstract} onChange={e => setForm(f => ({ ...f, abstract: e.target.value }))} placeholder="Brief description of your work / 简短介绍你的作品..." required style={{ minHeight: 120 }} />
                   </div>
                   <div style={{ gridColumn: 'span 2', border: '2px dashed #d4cfc6', padding: 32, textAlign: 'center', position: 'relative', cursor: 'pointer', transition: 'all 0.2s' }}>
                     <input type="file" accept=".pdf,.doc,.docx" onChange={e => setPdfFile(e.target.files[0])} style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
@@ -401,20 +413,20 @@ export default function Home() {
                     <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: '#6b6560' }}>PDF · 最大 10MB</div>
                   </div>
                   <div style={{ gridColumn: 'span 2' }}>
-                    <button type="submit" style={{ width: '100%', padding: 18, background: '#0f0d0a', color: '#f5f0e8', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 13, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer' }}>提交参与今日评选 →</button>
+                    <button type="submit" style={{ width: '100%', padding: 18, background: '#0f0d0a', color: '#f5f0e8', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 13, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer' }}>Submit to Today's Rating / 提交参与今日评选 →</button>
                   </div>
                 </div>
               </form>
             ) : (
               <div style={{ textAlign: 'center', padding: '80px 48px' }}>
                 <div style={{ fontSize: 64, marginBottom: 24 }}>🃏</div>
-                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 900, marginBottom: 16 }}>投稿成功！</h3>
-                <p style={{ fontSize: 15, color: '#6b6560', lineHeight: 1.6, maxWidth: 440, margin: '0 auto 24px' }}>你的作品已加入今日评选，24小时后揭晓是否收录。</p>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 900, marginBottom: 16 }}>Submitted! <span style={{ color: '#6b6560', fontSize: 24, fontWeight: 400 }}>投稿成功！</span></h3>
+                <p style={{ fontSize: 15, color: '#6b6560', lineHeight: 1.6, maxWidth: 440, margin: '0 auto 24px' }}>Your paper has entered today's rating pool. Results in 24 hours.<br/>你的作品已加入今日评选，24小时后揭晓是否收录。</p>
                 <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 13, background: '#ede8db', border: '1px solid #0f0d0a', padding: '12px 24px', display: 'inline-block', marginBottom: 32, letterSpacing: '0.1em' }}>{refNum}</div>
                 <br />
                 <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
                   <button onClick={() => setPage('today')} style={{ padding: '12px 24px', background: '#c1121f', color: 'white', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer' }}>查看今日排名</button>
-                  <button onClick={() => { setSubmitted(false); setForm({ title: '', author: '', category: '', abstract: '' }); setPdfFile(null) }} style={{ padding: '12px 24px', background: 'none', border: '2px solid #0f0d0a', fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer' }}>再次投稿</button>
+                  <button onClick={() => { setSubmitted(false); setForm({ title: '', author: '', category: '', abstract: '' }); setPdfFile(null) }} style={{ padding: '12px 24px', background: 'none', border: '2px solid #0f0d0a', fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer' }}>Submit Again / 再次投稿</button>
                 </div>
               </div>
             )}
