@@ -64,11 +64,14 @@ export default function Home() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [today, setToday] = useState('')
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
     setToday(new Date().toLocaleDateString('zh-CN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }))
     loadPapers()
     loadVotes()
+    supabase.auth.getSession().then(({ data }) => setUser(data?.session?.user || null))
+    supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user || null))
   }, [])
 
   async function loadPapers() {
@@ -97,6 +100,7 @@ export default function Home() {
   }
 
   async function castVote(paperId, ratingKey) {
+    if (!user) { setPage('auth'); return }
     const prev = userVotes[paperId]
     if (prev) return // 已投过，锁定不能改
 
@@ -137,6 +141,7 @@ export default function Home() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (!user) { setPage('auth'); return }
     let pdfUrl = null
     if (pdfFile) {
       const fileName = `${Date.now()}-${pdfFile.name}`
@@ -372,7 +377,15 @@ export default function Home() {
               <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(34px,6vw,56px)', fontWeight: 900, marginBottom: 8 }}>投稿</h2>
               <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6b6560' }}>今日投稿参与24小时评选 · 前10名收录</p>
             </div>
-            {!submitted ? (
+            {!user ? (
+              <div style={{ textAlign: 'center', padding: '60px 48px' }}>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 900, marginBottom: 12 }}>Login Required</h3>
+                <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: '#6b6560', marginBottom: 8 }}>You must be logged in to submit a paper</p>
+                <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: '#6b6560', marginBottom: 24 }}>请登录后再投稿</p>
+                <button onClick={() => setPage('auth')} style={{ padding: '12px 32px', background: '#c1121f', color: 'white', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer' }}>Register / Sign In → 登录</button>
+              </div>
+            ) : !submitted ? (
               <form onSubmit={handleSubmit} style={{ padding: 32 }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div style={{ gridColumn: 'span 2' }}>
