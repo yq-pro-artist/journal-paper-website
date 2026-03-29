@@ -65,14 +65,50 @@ export default function Home() {
   const [password, setPassword] = useState('')
   const [today, setToday] = useState('')
   const [user, setUser] = useState(null)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [allUsers, setAllUsers] = useState([])
 
   useEffect(() => {
     setToday(new Date().toLocaleDateString('zh-CN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }))
     loadPapers()
     loadVotes()
-    supabase.auth.getSession().then(({ data }) => setUser(data?.session?.user || null))
-    supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user || null))
+    supabase.auth.getSession().then(async ({ data }) => {
+      const u = data?.session?.user || null
+      setUser(u)
+      if (u) {
+        const { data: adminData } = await supabase.from('admins').select('id').eq('id', u.id).single()
+        setIsAdmin(!!adminData)
+      }
+    })
+    supabase.auth.onAuthStateChange(async (_e, session) => {
+      const u = session?.user || null
+      setUser(u)
+      if (u) {
+        const { data: adminData } = await supabase.from('admins').select('id').eq('id', u.id).single()
+        setIsAdmin(!!adminData)
+      } else {
+        setIsAdmin(false)
+      }
+    })
   }, [])
+
+  async function deletePaper(id) {
+    if (!isAdmin) return
+    await supabase.from('papers').delete().eq('id', id)
+    loadPapers()
+  }
+
+  async function toggleCollect(id, current) {
+    if (!isAdmin) return
+    await supabase.from('papers').update({ collected: !current, collected_date: !current ? new Date().toISOString().split('T')[0] : null }).eq('id', id)
+    loadPapers()
+  }
+
+  async function banUser(email) {
+    if (!isAdmin) return
+    await supabase.from('banned_users').insert({ email, reason: 'Banned by admin' })
+    alert('User banned: ' + email)
+  }
 
   async function loadPapers() {
     const { data } = await supabase.from('papers').select('*').order('created_at', { ascending: false })
@@ -198,7 +234,7 @@ export default function Home() {
           <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#6b6560', marginTop: 8 }}>全民审核员</div>
         </div>
         <nav style={{ display: 'flex', borderTop: '1px solid #0f0d0a', fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-          {[['home','Main'], ['today',"Today's Paper"], ['archive','Archive'], ['submit','Submit'], ['auth','Register/Sign In']].map(([id, label]) => (
+          {[['home','Main'], ['today',"Today's Paper"], ['archive','Archive'], ['submit','Submit'], ['auth','Register/Sign In'], ...(isAdmin ? [['admin','⚙️ Admin']] : [])].map(([id, label]) => (
             <a key={id} onClick={() => setPage(id)} style={{ flex: 1, textAlign: 'center', padding: '10px', borderRight: id !== 'auth' ? '1px solid #0f0d0a' : 'none', cursor: 'pointer', background: page === id ? '#c1121f' : 'transparent', color: page === id ? 'white' : '#0f0d0a', transition: 'background 0.2s' }}>{label}</a>
           ))}
         </nav>
@@ -472,6 +508,44 @@ export default function Home() {
               {authMsg && <div style={{ border: authMsg.startsWith('✅') ? '1px solid #b7dfc7' : '1px solid #edb4ae', background: authMsg.startsWith('✅') ? '#eaf8f1' : '#fff1ef', color: authMsg.startsWith('✅') ? '#1d7f56' : '#9d2c21', fontFamily: "'DM Mono', monospace", fontSize: 11, padding: '10px 12px', marginBottom: 12 }}>{authMsg}</div>}
               <button type="submit" style={{ width: '100%', padding: 18, background: '#0f0d0a', color: '#f5f0e8', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 13, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer' }}>{authTab === 'login' ? '登录' : '创建账号'}</button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* 管理员后台 */}
+      {page === 'admin' && isAdmin && (
+        <div style={{ padding: 48, animation: 'fadeIn 0.4s ease' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 32 }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700 }}>Admin Panel</h2>
+            <div style={{ flex: 1, height: 1, background: '#0f0d0a' }} />
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: '#c1121f' }}>管理员专用</span>
+          </div>
+
+          {/* 所有论文管理 */}
+          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, marginBottom: 16 }}>All Papers — 所有论文</h3>
+          <div style={{ border: '1px solid #0f0d0a', marginBottom: 48 }}>
+            {papers.map(p => {
+              const { score, total } = calcScore(votes[p.id])
+              return (
+                <div key={p.id} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, padding: '16px 20px', borderBottom: '1px solid #e8e3da', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontWeight: 700 }}>{p.title}</div>
+                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, color: '#6b6560', marginTop: 4 }}>
+                      {p.author} · {new Date(p.created_at).toLocaleDateString('zh-CN')} · {score.toFixed(1)}分 · {total}票
+                      {p.collected && <span style={{ color: '#c1121f', marginLeft: 8 }}>● 已收录</span>}
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={() => toggleCollect(p.id, p.collected)} style={{ padding: '6px 12px', background: p.collected ? '#6b6560' : '#b8860b', color: 'white', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 9, cursor: 'pointer', letterSpacing: '0.1em' }}>
+                      {p.collected ? 'UNCOLLECT' : 'COLLECT'}
+                    </button>
+                    <button onClick={() => { if (window.confirm('Delete this paper?')) deletePaper(p.id) }} style={{ padding: '6px 12px', background: '#c1121f', color: 'white', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 9, cursor: 'pointer', letterSpacing: '0.1em' }}>
+                      DELETE
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
