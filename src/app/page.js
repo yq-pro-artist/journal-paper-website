@@ -63,6 +63,10 @@ export default function Home() {
   const [refNum, setRefNum] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showReset, setShowReset] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetMsg, setResetMsg] = useState('')
   const [today, setToday] = useState('')
   const [user, setUser] = useState(null)
 
@@ -130,13 +134,30 @@ export default function Home() {
     if (authTab === 'login') {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) setAuthMsg('❌ ' + error.message)
-      else { setAuthMsg('✅ 登录成功'); setTimeout(() => setPage('home'), 800) }
+      else { setAuthMsg('✅ Login successful!'); setTimeout(() => setPage('home'), 800) }
     } else {
+      if (password !== confirmPassword) {
+        setAuthMsg('❌ Passwords do not match')
+        return
+      }
+      if (password.length < 6) {
+        setAuthMsg('❌ Password must be at least 6 characters')
+        return
+      }
       const { data, error } = await supabase.auth.signUp({ email, password })
       if (error) setAuthMsg('❌ ' + error.message)
-      else if (data?.user?.identities?.length === 0) setAuthMsg('❌ 该邮箱已注册，请直接登录')
-      else setAuthMsg('✅ 注册成功！验证邮件已发送到 ' + email + '，请查收并点击链接完成验证后再登录。')
+      else if (data?.user?.identities?.length === 0) setAuthMsg('❌ Email already registered. Please sign in.')
+      else setAuthMsg('✅ Registration successful! Please check your email to verify your account before signing in.')
     }
+  }
+
+  async function handleResetPassword(e) {
+    e.preventDefault()
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: 'https://journal-paper-website.vercel.app/reset-password'
+    })
+    if (error) setResetMsg('❌ ' + error.message)
+    else setResetMsg('✅ Password reset email sent! Please check your inbox.')
   }
 
   async function handleSubmit(e) {
@@ -452,26 +473,49 @@ export default function Home() {
         <div style={{ maxWidth: 600, margin: '0 auto', padding: '56px 48px', animation: 'fadeIn 0.4s ease' }}>
           <div style={{ border: '1px solid #0f0d0a', background: '#fffdf9' }}>
             <div style={{ borderBottom: '3px double #0f0d0a', textAlign: 'center', padding: '28px 16px 18px' }}>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 48, marginBottom: 8 }}>账号</h2>
-              <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6b6560' }}>登录后可管理你的投稿</p>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 48, marginBottom: 4 }}>{authTab === 'login' ? 'Sign In' : 'Register'}</h2>
+              <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6b6560' }}>Login required to submit and vote</p>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderBottom: '1px solid #0f0d0a' }}>
-              {[['login', '登录'], ['signup', '注册']].map(([tab, label]) => (
-                <button key={tab} onClick={() => { setAuthTab(tab); setAuthMsg('') }} style={{ border: 'none', borderRight: tab === 'login' ? '1px solid #0f0d0a' : 'none', background: authTab === tab ? '#0f0d0a' : '#f5f0e8', color: authTab === tab ? '#f5f0e8' : '#0f0d0a', fontFamily: "'DM Mono', monospace", letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: 11, padding: 12, cursor: 'pointer' }}>{label}</button>
+              {[['login', 'Sign In'], ['signup', 'Register']].map(([tab, label]) => (
+                <button key={tab} onClick={() => { setAuthTab(tab); setAuthMsg(''); setShowReset(false); setConfirmPassword('') }} style={{ border: 'none', borderRight: tab === 'login' ? '1px solid #0f0d0a' : 'none', background: authTab === tab ? '#0f0d0a' : '#f5f0e8', color: authTab === tab ? '#f5f0e8' : '#0f0d0a', fontFamily: "'DM Mono', monospace", letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: 11, padding: 12, cursor: 'pointer' }}>{label}</button>
               ))}
             </div>
-            <form onSubmit={handleAuth} style={{ padding: 26 }}>
-              <div style={{ marginBottom: 12 }}>
-                <label>邮箱 <span style={{ color: '#c1121f' }}>*</span></label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" required />
-              </div>
-              <div style={{ marginBottom: 16 }}>
-                <label>密码 <span style={{ color: '#c1121f' }}>*</span></label>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="至少 6 位" minLength={6} required />
-              </div>
-              {authMsg && <div style={{ border: authMsg.startsWith('✅') ? '1px solid #b7dfc7' : '1px solid #edb4ae', background: authMsg.startsWith('✅') ? '#eaf8f1' : '#fff1ef', color: authMsg.startsWith('✅') ? '#1d7f56' : '#9d2c21', fontFamily: "'DM Mono', monospace", fontSize: 11, padding: '10px 12px', marginBottom: 12 }}>{authMsg}</div>}
-              <button type="submit" style={{ width: '100%', padding: 18, background: '#0f0d0a', color: '#f5f0e8', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 13, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer' }}>{authTab === 'login' ? '登录' : '创建账号'}</button>
-            </form>
+
+            {showReset ? (
+              <form onSubmit={handleResetPassword} style={{ padding: 26 }}>
+                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, marginBottom: 16 }}>Reset Password</div>
+                <div style={{ marginBottom: 16 }}>
+                  <label>Email Address <span style={{ color: '#c1121f' }}>*</span></label>
+                  <input type="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)} placeholder="your@email.com" required />
+                </div>
+                {resetMsg && <div style={{ border: resetMsg.startsWith('✅') ? '1px solid #b7dfc7' : '1px solid #edb4ae', background: resetMsg.startsWith('✅') ? '#eaf8f1' : '#fff1ef', color: resetMsg.startsWith('✅') ? '#1d7f56' : '#9d2c21', fontFamily: "'DM Mono', monospace", fontSize: 11, padding: '10px 12px', marginBottom: 12 }}>{resetMsg}</div>}
+                <button type="submit" style={{ width: '100%', padding: 14, background: '#0f0d0a', color: '#f5f0e8', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 12, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', marginBottom: 12 }}>Send Reset Email →</button>
+                <button type="button" onClick={() => { setShowReset(false); setResetMsg('') }} style={{ width: '100%', padding: 10, background: 'none', border: '1px solid #0f0d0a', fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer' }}>← Back to Sign In</button>
+              </form>
+            ) : (
+              <form onSubmit={handleAuth} style={{ padding: 26 }}>
+                <div style={{ marginBottom: 12 }}>
+                  <label>Email Address <span style={{ color: '#c1121f' }}>*</span></label>
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" required />
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <label>Password <span style={{ color: '#c1121f' }}>*</span></label>
+                  <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" minLength={6} required />
+                </div>
+                {authTab === 'signup' && (
+                  <div style={{ marginBottom: 12 }}>
+                    <label>Confirm Password <span style={{ color: '#c1121f' }}>*</span></label>
+                    <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Re-enter your password" required />
+                  </div>
+                )}
+                {authMsg && <div style={{ border: authMsg.startsWith('✅') ? '1px solid #b7dfc7' : '1px solid #edb4ae', background: authMsg.startsWith('✅') ? '#eaf8f1' : '#fff1ef', color: authMsg.startsWith('✅') ? '#1d7f56' : '#9d2c21', fontFamily: "'DM Mono', monospace", fontSize: 11, padding: '10px 12px', marginBottom: 12 }}>{authMsg}</div>}
+                <button type="submit" style={{ width: '100%', padding: 16, background: '#0f0d0a', color: '#f5f0e8', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer', marginBottom: 12 }}>{authTab === 'login' ? 'Sign In →' : 'Create Account →'}</button>
+                {authTab === 'login' && (
+                  <button type="button" onClick={() => { setShowReset(true); setAuthMsg('') }} style={{ width: '100%', padding: 10, background: 'none', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 10, color: '#6b6560', cursor: 'pointer', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Forgot Password?</button>
+                )}
+              </form>
+            )}
           </div>
         </div>
       )}
