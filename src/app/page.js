@@ -142,6 +142,10 @@ export default function Home() {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!user) { setPage('auth'); return }
+    if (!pdfFile) {
+      alert('Please upload a PDF file / 请上传 PDF 文件')
+      return
+    }
     let pdfUrl = null
     if (pdfFile) {
       const fileName = `${Date.now()}-${pdfFile.name}`
@@ -420,10 +424,10 @@ export default function Home() {
                     <textarea value={form.abstract} onChange={e => setForm(f => ({ ...f, abstract: e.target.value }))} placeholder="Brief description of your work / 简短介绍你的作品..." required style={{ minHeight: 120 }} />
                   </div>
                   <div style={{ gridColumn: 'span 2', border: '2px dashed #d4cfc6', padding: 32, textAlign: 'center', position: 'relative', cursor: 'pointer', transition: 'all 0.2s' }}>
-                    <input type="file" accept=".pdf,.doc,.docx" onChange={e => setPdfFile(e.target.files[0])} style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
+                    <input type="file" accept=".pdf" onChange={e => setPdfFile(e.target.files[0])} style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
                     <div style={{ fontSize: 32, marginBottom: 10 }}>📄</div>
                     <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 700, marginBottom: 6, color: pdfFile ? '#c1121f' : '#0f0d0a' }}>{pdfFile ? `✓ ${pdfFile.name}` : '拖拽文件或点击上传'}</div>
-                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: '#6b6560' }}>PDF · 最大 10MB</div>
+                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: '#c1121f', fontWeight: 600 }}>PDF required · 必须上传 PDF · Max 10MB</div>
                   </div>
                   <div style={{ gridColumn: 'span 2' }}>
                     <button type="submit" style={{ width: '100%', padding: 18, background: '#0f0d0a', color: '#f5f0e8', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 13, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer' }}>Submit to Today's Rating / 提交参与今日评选 →</button>
