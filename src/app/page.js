@@ -216,7 +216,7 @@ export default function Home() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr', height: '100%' }}>
               <div style={{ padding: '48px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#c1121f', marginBottom: 20, fontWeight: 600 }}>Featured</div>
+                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 20, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#c1121f', marginBottom: 20, fontWeight: 600 }}>Featured</div>
                   <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px,3vw,42px)', fontWeight: 900, lineHeight: 1.1, marginBottom: 0 }}>
                     <span>Where </span><em style={{ fontStyle: 'italic', color: '#c1121f' }}>independent</em><span> voices find their place in print</span>
                   </h2>
