@@ -543,7 +543,7 @@ function PaperCard({ p, rank, votes, userVote, onVote, showBadge }) {
       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 700, lineHeight: 1.3, marginBottom: 7, paddingRight: 34 }}>{p.title}</div>
       <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, color: '#6b6560', marginBottom: 9 }}>{p.author} · {new Date(p.created_at).toLocaleDateString('zh-CN')}</div>
       <div style={{ fontSize: 12, lineHeight: 1.6, color: '#6b6560', marginBottom: 12, flex: 1 }}>{p.summary}</div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, padding: '8px 10px', background: '#ede8db', border: '1px solid #0f0d0a' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, padding: '8px 10px', background: '#ffffff', border: '1px solid #0f0d0a' }}>
         <div>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 42, fontWeight: 900, lineHeight: 1 }}>{score.toFixed(1)}</div>
           <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 8, color: '#6b6560', textTransform: 'uppercase' }}>综合评分</div>
