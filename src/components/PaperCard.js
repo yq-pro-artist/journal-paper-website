@@ -50,10 +50,22 @@ export default function PaperCard({ p, rank, votes, userVote, onVote, showBadge,
         marginTop: showBadge ? 20 : 0,
       }}>{p.tags?.[0] || '未分类'}</div>
 
-      <div style={{
-        fontFamily: "'Playfair Display', serif", fontSize: 16,
-        fontWeight: 700, lineHeight: 1.3, marginBottom: 7, paddingRight: 34,
-      }}>{p.title}</div>
+      {p.pdf_url ? (
+        <a href={p.pdf_url} target="_blank" rel="noreferrer" style={{
+          fontFamily: "'Playfair Display', serif", fontSize: 16,
+          fontWeight: 700, lineHeight: 1.3, marginBottom: 7, paddingRight: 34,
+          display: 'block', color: '#0f0d0a', textDecoration: 'none',
+          cursor: 'pointer',
+        }}
+        onMouseEnter={e => e.currentTarget.style.color = '#c1121f'}
+        onMouseLeave={e => e.currentTarget.style.color = '#0f0d0a'}
+        >{p.title}</a>
+      ) : (
+        <div style={{
+          fontFamily: "'Playfair Display', serif", fontSize: 16,
+          fontWeight: 700, lineHeight: 1.3, marginBottom: 7, paddingRight: 34,
+        }}>{p.title}</div>
+      )}
 
       <div style={{
         fontFamily: "'DM Mono', monospace", fontSize: 9,
