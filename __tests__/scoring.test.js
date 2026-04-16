@@ -77,3 +77,40 @@ describe('日期判断', () => {
     expect(isToday(yesterday.toISOString())).toBe(false)
   })
 })
+
+describe('isLastWeek (日历周)', () => {
+  function isLastWeek(dateStr) {
+    const d = new Date(dateStr)
+    const now = new Date()
+    const thisMonday = new Date(now)
+    const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay()
+    thisMonday.setDate(now.getDate() - (dayOfWeek - 1))
+    thisMonday.setHours(0, 0, 0, 0)
+    const lastMonday = new Date(thisMonday)
+    lastMonday.setDate(thisMonday.getDate() - 7)
+    return d >= lastMonday && d < thisMonday
+  }
+
+  test('今天不是上周', () => {
+    expect(isLastWeek(new Date().toISOString())).toBe(false)
+  })
+
+  test('8天前属于上周', () => {
+    const d = new Date()
+    d.setDate(d.getDate() - 8)
+    // 8天前大概率落在上周，但取决于今天是周几
+    // 这是一个近似测试
+    const now = new Date()
+    const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay()
+    if (dayOfWeek >= 2) {
+      // 如果今天是周二或之后，8天前在上周
+      expect(isLastWeek(d.toISOString())).toBe(true)
+    }
+  })
+
+  test('15天前不是上周', () => {
+    const d = new Date()
+    d.setDate(d.getDate() - 15)
+    expect(isLastWeek(d.toISOString())).toBe(false)
+  })
+})
