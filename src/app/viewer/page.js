@@ -1,12 +1,6 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useRef, useState } from 'react'
-import * as pdfjsLib from 'pdfjs-dist'
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url
-).toString()
 
 function ViewerContent() {
   const searchParams = useSearchParams()
@@ -21,12 +15,11 @@ function ViewerContent() {
 
     async function renderPDF() {
       try {
-        const pdf = await pdfjsLib.getDocument({
-          url,
-          cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.9.155/cmaps/',
-          cMapPacked: true,
-        }).promise
+        const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs')
+        const pdfjsWorker = await import('pdfjs-dist/legacy/build/pdf.worker.mjs')
+        pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
+        const pdf = await pdfjsLib.getDocument(url).promise
         setNumPages(pdf.numPages)
         const container = containerRef.current
         container.innerHTML = ''
@@ -47,18 +40,16 @@ function ViewerContent() {
           const ctx = canvas.getContext('2d')
           await page.render({ canvasContext: ctx, viewport }).promise
 
-          // Bake watermark into canvas
           ctx.save()
           ctx.globalAlpha = 0.1
           ctx.fillStyle = '#c1121f'
           ctx.font = 'bold 48px monospace'
-          const text = 'JOKER EXCLUSIVE'
           for (let y = 80; y < viewport.height; y += 200) {
             for (let x = -100; x < viewport.width; x += 400) {
               ctx.save()
               ctx.translate(x, y)
               ctx.rotate(-Math.PI / 6)
-              ctx.fillText(text, 0, 0)
+              ctx.fillText('JOKER EXCLUSIVE', 0, 0)
               ctx.restore()
             }
           }
