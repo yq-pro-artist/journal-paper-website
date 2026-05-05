@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { trackSubmit } from '../lib/logsnag'
-import { RATINGS, calcScore, isToday, isLastWeek, isLastMonth } from '../lib/utils'
+import { RATINGS, calcScore, isToday, isYesterday, isLastWeek, isLastMonth } from '../lib/utils'
 import PaperCard from '../components/PaperCard'
 
 export default function Home() {
@@ -164,7 +164,7 @@ export default function Home() {
   const todaySorted = [...todayPapers].sort((a, b) => calcScore(votes[b.id]).score - calcScore(votes[a.id]).score)
 
   const yesterdayTop3 = [...papers]
-    .filter(p => p.collected === true)
+    .filter(p => p.collected === true && p.collected_date && isYesterday(p.collected_date))
     .sort((a, b) => new Date(b.collected_date) - new Date(a.collected_date))
     .slice(0, 3)
 
