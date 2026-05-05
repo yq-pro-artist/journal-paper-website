@@ -13,7 +13,8 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.99.1",
     "logsnag": "^1.0.0",
-    "next": "16.1.6",
+    "next": "^16.2.4",
+    "pdfjs-dist": "^5.7.284",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
