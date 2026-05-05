@@ -51,7 +51,7 @@ export default function PaperCard({ p, rank, votes, userVote, onVote, showBadge,
       }}>{p.tags?.[0] || '未分类'}</div>
 
       {p.pdf_url ? (
-        <a href={p.pdf_url} target="_blank" rel="noreferrer" style={{
+        <a href={p.pdf_url + "#toolbar=0"} target="_blank" rel="noreferrer" style={{
           fontFamily: "'Playfair Display', serif", fontSize: 16,
           fontWeight: 700, lineHeight: 1.3, marginBottom: 7, paddingRight: 34,
           display: 'block', color: '#0f0d0a', textDecoration: 'none',

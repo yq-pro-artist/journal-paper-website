@@ -353,7 +353,7 @@ export default function Home() {
                   <div>
                     <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c1121f', marginBottom: 6 }}>{p.tags?.[0] || '未分类'}</div>
                     {p.pdf_url ? (
-                      <a href={p.pdf_url} target="_blank" rel="noreferrer" style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, marginBottom: 6, lineHeight: 1.3, display: 'block', color: '#0f0d0a', textDecoration: 'none' }}>{p.title}</a>
+                      <a href={"/viewer?url=" + encodeURIComponent(p.pdf_url)} target="_blank" rel="noreferrer" style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, marginBottom: 6, lineHeight: 1.3, display: 'block', color: '#0f0d0a', textDecoration: 'none' }}>{p.title}</a>
                     ) : (
                       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, marginBottom: 6, lineHeight: 1.3 }}>{p.title}</div>
                     )}
@@ -364,7 +364,7 @@ export default function Home() {
                     <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 900, color: '#b8860b' }}>{score.toFixed(1)}</div>
                     <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, color: '#6b6560' }}>{total} 票</div>
                     {p.pdf_url && (
-                      <a href={p.pdf_url} target="_blank" rel="noreferrer" style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, color: '#c1121f', display: 'block', marginTop: 4 }}>📄 PDF</a>
+                      <a href={"/viewer?url=" + encodeURIComponent(p.pdf_url)} target="_blank" rel="noreferrer" style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, color: '#c1121f', display: 'block', marginTop: 4 }}>📄 PDF</a>
                     )}
                   </div>
                 </div>
