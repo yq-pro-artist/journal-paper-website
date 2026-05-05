@@ -8,15 +8,17 @@ function ViewerContent() {
   const containerRef = useRef(null)
   const [numPages, setNumPages] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (!url) return
 
     async function renderPDF() {
-      const pdfjsLib = await import('pdfjs-dist')
-      pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs'
-
       try {
+        const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs')
+        const pdfjsWorker = await import('pdfjs-dist/legacy/build/pdf.worker.mjs')
+        pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
+
         const pdf = await pdfjsLib.getDocument(url).promise
         setNumPages(pdf.numPages)
         const container = containerRef.current
@@ -27,16 +29,13 @@ function ViewerContent() {
           const scale = 1.5
           const viewport = page.getViewport({ scale })
 
-          const wrapper = document.createElement('div')
-          wrapper.style.position = 'relative'
-          wrapper.style.marginBottom = '20px'
-
           const canvas = document.createElement('canvas')
           canvas.width = viewport.width
           canvas.height = viewport.height
           canvas.style.width = '100%'
           canvas.style.height = 'auto'
           canvas.style.display = 'block'
+          canvas.style.marginBottom = '20px'
 
           const ctx = canvas.getContext('2d')
           await page.render({ canvasContext: ctx, viewport }).promise
@@ -44,27 +43,24 @@ function ViewerContent() {
           ctx.save()
           ctx.globalAlpha = 0.1
           ctx.fillStyle = '#c1121f'
-          ctx.font = 'bold 48px DM Mono, monospace'
-          ctx.translate(viewport.width / 2, viewport.height / 2)
-          ctx.rotate(-Math.PI / 6)
-          const text = 'JOKER EXCLUSIVE'
-          const positions = [
-            [-300, -200], [100, -200],
-            [-300, 0], [100, 0],
-            [-300, 200], [100, 200],
-          ]
-          positions.forEach(([x, y]) => {
-            ctx.fillText(text, x, y)
-          })
+          ctx.font = 'bold 48px monospace'
+          for (let y = 80; y < viewport.height; y += 200) {
+            for (let x = -100; x < viewport.width; x += 400) {
+              ctx.save()
+              ctx.translate(x, y)
+              ctx.rotate(-Math.PI / 6)
+              ctx.fillText('JOKER EXCLUSIVE', 0, 0)
+              ctx.restore()
+            }
+          }
           ctx.restore()
 
-          wrapper.appendChild(canvas)
-          container.appendChild(wrapper)
+          container.appendChild(canvas)
         }
         setLoading(false)
       } catch (err) {
         console.error('PDF render error:', err)
-        containerRef.current.innerHTML = '<div style="padding:48px;text-align:center;color:#c1121f">PDF 加载失败</div>'
+        setError('PDF 加载失败: ' + err.message)
         setLoading(false)
       }
     }
@@ -93,9 +89,15 @@ function ViewerContent() {
         <a href="/" style={{ color: '#f5f0e8', textDecoration: 'none' }}>← 返回</a>
       </div>
 
-      {loading && (
+      {loading && !error && (
         <div style={{ textAlign: 'center', padding: 48, color: '#f5f0e8', fontFamily: "'DM Mono', monospace" }}>
           加载中...
+        </div>
+      )}
+
+      {error && (
+        <div style={{ textAlign: 'center', padding: 48, color: '#c1121f', fontFamily: "'DM Mono', monospace" }}>
+          {error}
         </div>
       )}
 
