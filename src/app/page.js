@@ -484,6 +484,11 @@ export default function Home() {
                 )}
                 {authMsg && <div style={{ border: authMsg.startsWith('✅') ? '1px solid #b7dfc7' : '1px solid #edb4ae', background: authMsg.startsWith('✅') ? '#eaf8f1' : '#fff1ef', color: authMsg.startsWith('✅') ? '#1d7f56' : '#9d2c21', fontFamily: "'DM Mono', monospace", fontSize: 11, padding: '10px 12px', marginBottom: 12 }}>{authMsg}</div>}
                 <button type="submit" style={{ width: '100%', padding: 16, background: '#0f0d0a', color: '#f5f0e8', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer', marginBottom: 12 }}>{authTab === 'login' ? 'Sign In →' : 'Create Account →'}</button>
+                {authTab === 'signup' && (
+                  <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: '#6b6560', textAlign: 'center', marginTop: 8, lineHeight: 1.6, letterSpacing: '0.02em' }}>
+                    By registering, you agree to the Joker <a href="/terms" target="_blank" style={{ color: '#c1121f', textDecoration: 'underline' }}>Terms & Conditions</a>
+                  </p>
+                )}
                 {authTab === 'login' && (
                   <button type="button" onClick={() => { setShowReset(true); setAuthMsg('') }} style={{ width: '100%', padding: 10, background: 'none', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: 10, color: '#6b6560', cursor: 'pointer', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Forgot Password?</button>
                 )}
